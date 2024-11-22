@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Comptatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Site Web</title>
+<link rel="stylesheet" href="fiche.css" href="variables.scss">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+<head>
+<title>Formulaire de Feedback Popup</title>
+
+</head>
+<body>
+
+<button id="openPopup">Ouvrir le Formulaire</button>
+
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <h2>Formulaire de Feedback</h2>
+    <form id="feedbackForm">
+      <label for="name">Nom et Prénom:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="phone">Téléphone:</label>
+      <input type="tel" id="phone" name="phone">
+
+      <label for="organization">Organisation:</label>
+      <input type="text" id="organization" name="organization">
+
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" required></textarea>
+
+      <input type="checkbox" id="privacyPolicy" name="privacyPolicy" required>
+      <label for="privacyPolicy">J'accepte la politique de confidentialité</label>
+
+      <button type="submit">Envoyer</button>
+    </form>
+    <div id="message"></div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('#openPopup').click(function() {
+    $('#popup').show();
+    history.pushState({}, '', '?feedback');
+  });
+
+  $(window).on('popstate', function() {
+    $('#popup').hide();
+  });
+
+  $('#feedbackForm').submit(function(e) {
+    e.preventDefault();
+    const formData = $(this).serialize();
+    const messageDiv = $('#message');
+    messageDiv.empty();
+
+    $.ajax({
+      type: 'POST',
+      url: 'votre-point-de-fin-serveur',
+      data: formData,
+      success: function(response) {
+        messageDiv.addClass('message success').text('Formulaire envoyé avec succès!');
+        $('#feedbackForm')[0].reset(); // Réinitialise le formulaire
+      },
+      error: function(error) {
+        messageDiv.addClass('message error').text('Erreur lors de l\'envoi du formulaire!');
+        console.error('Erreur:', error);
+      }
+    });
+  });
+});
+</script>
+
+</body>
+</html>
